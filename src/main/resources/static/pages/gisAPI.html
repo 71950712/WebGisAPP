@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Test Map</title>
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/esri/themes/light/main.css" />
+    <style>
+      html,
+      body,
+      #viewDiv {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="http://localhost:8580/arcgis_js_api/library/4.12/dojo/dojo.js"></script>
+    <!--<script>
+      require([
+        "esri/Map",
+        "esri/views/MapView"
+      ], function(Map, MapView) {
+
+        var map = new Map({
+          basemap: "topo-vector"
+        });
+
+        var view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-118.71511,34.09042],
+          zoom: 11
+        });
+
+      });
+    </script>-->
+    <script>
+      var myMap, view;
+      require([
+        "esri/Basemap",
+        "esri/layers/TileLayer",
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/widgets/BasemapToggle",
+        "esri/widgets/BasemapGallery",
+        "esri/views/ui/DefaultUI"
+      ], function (Basemap, TileLayer, Map, MapView, BasemapToggle, BasemapGallery, DefaultUI){
+        // --------------------------------------------------------------------
+        // If you do not have public Internet access then use the Basemap class
+        // and point this URL to your own locally accessible cached service.
+        //
+        // Otherwise you can just use one of the named hosted ArcGIS services.
+        // https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer
+        // --------------------------------------------------------------------
+        var basemapToggle = new BasemapToggle({
+          view: view,
+          nextBasemap: "satellite"
+        });
+        var basemapGallery = new BasemapGallery({
+          view: view,
+          source: {
+            portal: {
+              url: "https://www.arcgis.com",
+              useVectorBasemaps: true  // Load vector tile basemaps
+            }
+          }
+        });
+        var layer = new TileLayer({
+          //url:"http://localhost:6080/arcgis/rest/services/SampleWorldCities/MapServer"
+          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
+        });
+        var customBasemap = new Basemap({
+          baseLayers: [layer],
+          title: "Custom Basemap",
+          id: "myBasemap"
+        });
+        myMap = new Map({
+          basemap: customBasemap
+        });
+        view = new MapView({
+          center: [108.62, 21.95], // long, lat
+          container: "viewDiv",
+          map: myMap,
+          zoom: 15,
+          scale:5000
+        });
+        view.ui.add(basemapGallery, "top-right");
+        view.ui.add(basemapToggle, "bottom-right");
+      });
+    </script>
+  </head>
+  <body class="claro">
+    <div id="viewDiv"></div>
+  </body>
+</html>

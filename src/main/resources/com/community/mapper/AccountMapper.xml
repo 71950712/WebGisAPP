@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.community.mapper.AccountMapper">
+<select id="selectPwdById" parameterType="int" resultType="com.community.bean.Account">
+  select id,name,password,level from account where id = #{id}
+</select>
+  <insert id="insertOne" parameterType="com.community.mapper.AccountMapper">
+
+    insert into account (id, password)
+    values( #{id}, #{pwd})
+  </insert>
+
+
+
+
+
+</mapper>

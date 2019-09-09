@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+    <title>Test Map</title>
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/esri/themes/light/main.css" />
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap-theme.min.css"/>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="http://localhost:8580/arcgis_js_api/js/jquery-3.4.1.min.js" ></script>
+    <script src="http://localhost:8580/arcgis_js_api/library/4.12/dojo/dojo.js"></script>
+
+    <script type="text/javascript">
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/widgets/BasemapToggle",
+        "esri/widgets/BasemapGallery",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/Search",
+        "esri/widgets/ScaleBar",
+        "esri/tasks/Locator",
+        "esri/Graphic",
+        "esri/widgets/Compass",
+        "esri/layers/GraphicsLayer",
+        "esri/widgets/Sketch",
+        "esri/geometry/geometryEngine",
+        "esri/widgets/CoordinateConversion",
+        "esri/tasks/RouteTask",
+        "esri/tasks/support/RouteParameters",
+        "esri/tasks/support/FeatureSet"
+
+
+
+      ], function (Map, MapView, BasemapToggle, BasemapGallery, FeatureLayer, Search, ScaleBar, Locator, Graphic, Compass, GraphicsLayer, Sketch, geometryEngine, CoordinateConversion, RouteTask, RouteParameters, FeatureSet){
+        // --------------------------------------------------------------------
+        // If you do not have public Internet access then use the Basemap class
+        // and point this URL to your own locally accessible cached service.
+        //
+        // Otherwise you can just use one of the named hosted ArcGIS services.
+        // https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer
+        // --------------------------------------------------------------------
+        // Parks and open spaces (polygons)
+
+        // The stops and route result will be stored in this layer
+        var routeLayer = new GraphicsLayer();
+
+
+
+
+
+        var map = new Map({
+          basemap: "streets",
+          layers: [routeLayer]
+        });
+        var view = new MapView({
+          //center: [108.62, 21.95], // long, lat
+          center: [-118.71511, 34.09042],
+          container: "viewDiv",
+          map: map,
+          zoom: 13,
+
+        });
+
+
+        var basemapToggle = new BasemapToggle({
+          view: view,
+          nextBasemap: "satellite"
+        });
+/*
+*/
+        var sketch = new Sketch({
+          view: view,
+          layer: routeLayer
+        });
+
+        var search = new Search({
+          view: view
+        });
+        var scaleBar = new ScaleBar({
+          view: view
+        });
+        var compass = new Compass({
+          view: view
+        });
+        var coordinateConversionWidget = new CoordinateConversion({
+          view: view
+        });
+//------------------------------------------------------------------------------------------------------------------
+
+
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+
+
+        var activeGraphic;
+
+
+        var bufferGraphic;
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+
+
+        $("#Analyze").click(function () {
+          var distance = $("#distance").val();
+          if(!distance){
+            alert("缓冲区距离必填!");
+            $("#distance").focus();//获取焦点
+            return ;
+          }
+          function findNearestGraphic(event) {
+            return view.hitTest(event).then(function (response) {
+              var graphic;
+              // Get the Trail graphics only
+              if (response.results.length) {
+                graphic = response.results.filter(function (result) {
+                  return (result.graphic.layer === routeLayer);
+                })[0].graphic;
+              }
+              // Only return new graphics are found
+
+                  return graphic;
+
+            });
+          }
+
+          function drawBuffer(bufferGeometry) {
+
+
+            bufferGraphic = new Graphic({
+              geometry: bufferGeometry,
+              symbol: {
+                type: "simple-fill",
+                color: "rgba(0,0,0,0)",
+                outline: {
+                  color: "rgba(0,0,0,.5)",
+                  width: 1
+                }
+              }
+            });
+            view.graphics.add(bufferGraphic);
+          }
+
+
+          view.graphics.remove(bufferGraphic);
+          view.on("pointer-move", function(event){
+          findNearestGraphic(event).then(function(graphic){
+            if (graphic) {
+              activeGraphic = graphic;
+
+              var buffer = geometryEngine.geodesicBuffer(activeGraphic.geometry,distance, "miles");
+              drawBuffer(buffer);
+            }
+          });
+
+
+            //*** ADD ***//
+            if (bufferGraphic) {
+              var currentPoint = view.toMap(event);
+              var intersects = geometryEngine.intersects(bufferGraphic.geometry, currentPoint);
+              var symbol = bufferGraphic.symbol.clone();
+              if (intersects) {
+                symbol.color = "rgba(0,0,0,.15)"; // Highlight
+              } else {
+                symbol.color = "rgba(0,0,0,0)"; // Transparent
+              }
+              bufferGraphic.symbol = symbol;
+            }
+          });
+        });
+
+
+
+
+
+
+
+
+
+        view.ui.add(coordinateConversionWidget, "bottom-left");
+        view.ui.add(basemapToggle, "bottom-right");
+        //view.ui.add(basemapGallery, "top-right");
+        view.ui.add(search, "top-right");
+        view.ui.add(sketch, "bottom-left");
+
+        // adds the compass to the top left corner of the MapView
+        view.ui.add(compass, "top-left");
+        // Add widget to the bottom left corner of the view
+        view.ui.add(scaleBar, {
+          position: "top-left"
+        });
+
+
+
+
+
+
+
+
+      });
+    </script>
+  </head>
+  <body class="claro">
+  <label for="distance" class="col-sm-2 control-label">缓冲区距离</label>
+  <input id="distance"type="text" class="form-control"placeholder="输入数字" autocomplete="off" name="distance">
+  <button id="Analyze"  class="btn btn-primary form-control">缓冲区分析</button>
+    <div id="viewDiv"></div>
+  </body>
+</html>

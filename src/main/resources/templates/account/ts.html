@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap-theme.min.css"/>
+    <link href="favicon.ico" rel="shortcut icon" />
+    <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="http://localhost:8580/arcgis_js_api/js/jquery-3.4.1.min.js" ></script>
+    <script type="text/javascript">
+        $(function() {
+            $.ajax({
+
+            });
+        });
+    </script>
+</head>
+<body>
+<h3>tiaozhuan </h3>
+<hr/>
+<!--只有权限为2的用户可见此链接-->
+<div shiro:hasPermission="2">
+    <a href="account/add">insert</a><br/>
+</div>
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Panel heading</div>
+
+
+    <!-- Table -->
+    <table id="table" class="table table-hover">
+        ...
+    </table>
+    <a href="account/article">query a article</a><br/>
+</div>
+
+</body>

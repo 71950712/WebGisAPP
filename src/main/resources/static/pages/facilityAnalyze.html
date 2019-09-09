@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no" />
+  <title>Test Map</title>
+  <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/library/4.12/esri/themes/light/main.css" />
+  <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap-theme.min.css"/>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
+  <script src="http://localhost:8580/arcgis_js_api/js/jquery-3.4.1.min.js" ></script>
+  <script src="http://localhost:8580/arcgis_js_api/library/4.12/dojo/dojo.js"></script>
+
+  <script type="text/javascript">
+    require([
+      "esri/Map",
+      "esri/Basemap",
+      "esri/views/MapView",
+      "esri/widgets/BasemapToggle",
+      "esri/widgets/BasemapGallery",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/Search",
+      "esri/widgets/ScaleBar",
+      "esri/tasks/Locator",
+      "esri/Graphic",
+      "esri/widgets/Compass",
+      "esri/layers/GraphicsLayer",
+      "esri/widgets/Sketch",
+      "esri/geometry/geometryEngine",
+      "esri/widgets/CoordinateConversion",
+      "esri/tasks/RouteTask",
+      "esri/tasks/support/RouteParameters",
+      "esri/tasks/support/FeatureSet",
+      "esri/tasks/ClosestFacilityTask",
+      "esri/tasks/support/ClosestFacilityParameters",
+      "dojo/_base/array"
+
+
+
+    ], function (Map, MapView, Basemap, BasemapToggle, BasemapGallery, FeatureLayer, Search, ScaleBar, Locator, Graphic, Compass, GraphicsLayer, Sketch, geometryEngine, CoordinateConversion, RouteTask, RouteParameters, FeatureSet, ClosestFacilityTask, ClosestFacilityParameters, array){
+      // --------------------------------------------------------------------
+      // If you do not have public Internet access then use the Basemap class
+      // and point this URL to your own locally accessible cached service.
+      //
+      // Otherwise you can just use one of the named hosted ArcGIS services.
+      // https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer
+      // --------------------------------------------------------------------
+      // Parks and open spaces (polygons)
+
+      // The stops and route result will be stored in this layer
+      var routeLayer = new GraphicsLayer();
+      // Point the URL to a valid route service that uses an
+      // ArcGIS Online hosted service proxy
+      var routeTask = new ClosestFacilityTask({
+        url:
+                "http://localhost:6080/arcgis/rest/services/ForTest/XiaMenClosest/NAServer"
+      });
+      // Setup the route parameters
+      var closestFacilityParameters = new ClosestFacilityParameters({
+        defaultCutoff: 7.0,
+        impedenceAttribute :"Miles",
+        returnIncidents: false,
+        returnRoutes: true,
+        returnDirections: true,
+        incidents: new FeatureSet(),
+        barriers: new FeatureSet(),
+        facilities: new FeatureSet(),
+        outSpatialReference: {
+          // autocasts as new SpatialReference()
+          wkid: 3857
+        }
+      });
+
+      // Define the symbology used to display the stops
+      var incidentSymbol = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        style: "circle",
+        size: 10,
+        outline: {
+          // autocasts as new SimpleLineSymbol()
+          width: 4
+        }
+      };
+      var barrierSymbol = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        style: "x",
+        size: 15,
+        outline: {
+          // autocasts as new SimpleLineSymbol()
+          color: "red",
+          width: 4
+        }
+      };
+      var facilitySymbol = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        style: "diamond",
+        size: 15,
+        outline: {
+          // autocasts as new SimpleLineSymbol()
+          color: "green",
+          width: 4
+        }
+      };
+      // Define the symbology used to display the route
+      var routeSymbol = {
+        type: "simple-line", // autocasts as SimpleLineSymbol()
+        color: [0, 0, 255, 0.5],
+        width: 5
+      };
+      // Adds a graphic when the user clicks the map. If 2 or more points exist, route is solved.
+
+
+      var layer = new TileLayer({
+        url: "http://localhost:6080/arcgis/rest/services/ForTest/XiaMenClosest/MapServer"
+      });
+
+
+      var customMap = new Basemap({
+        baseLayers: [layer]
+      });
+      var map = new Map({
+        basemap: customMap,
+        layers: [routeLayer]
+      });
+      var view = new MapView({
+        //center: [108.62, 21.95], // long, lat
+        center: [118.08, 24.48],
+        container: "viewDiv",
+        map: map,
+        zoom: 13,
+
+      });
+
+
+      var basemapToggle = new BasemapToggle({
+        view: view,
+        nextBasemap: "satellite"
+      });
+      /*
+      */
+      var sketch = new Sketch({
+        view: view,
+        layer: routeLayer
+      });
+
+      var search = new Search({
+        view: view
+      });
+      var scaleBar = new ScaleBar({
+        view: view
+      });
+      var compass = new Compass({
+        view: view
+      });
+      var coordinateConversionWidget = new CoordinateConversion({
+        view: view
+      });
+//------------------------------------------------------------------------------------------------------------------
+
+
+
+
+//------------------------------------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------------------------------------------------
+      var selectPointID;
+
+      $("#addIncident").click(function () {
+        selectPointID = 1;
+
+      });
+      $("#addBarrier").click(function () {
+        selectPointID = 2;
+
+      });
+      $("#addFacility").click(function () {
+        selectPointID = 3;
+
+      });
+      $("#Analyze").click(function () {
+
+        // Execute the route task if 2 or more stops are input
+        if (closestFacilityParameters.facilities.features.length == 0 || closestFacilityParameters.incidents.features.length == 0) {
+          alert("budui");
+          return;
+        }else {
+
+
+
+
+
+          routeTask.solve(closestFacilityParameters).then(function(solveResult){
+            alert(selectPointID);
+            array.forEach(solveResult.routes, function(route, index){
+              alert(selectPointID);
+              route.symbol(routeSymbol);
+              routeLayer.add(route);
+            });
+
+          });
+
+        }
+      });
+
+      view.on("click", function addPoint1(event) {
+                switch (selectPointID) {
+
+
+                  case 1:
+                    // Add a point at the location of the map click
+                    var incident = new Graphic({
+                      geometry: event.mapPoint,
+                      symbol: incidentSymbol
+                    });
+                    routeLayer.add(incident);
+                    closestFacilityParameters.incidents.features.push(incident);
+                    break;
+                  case 2:
+                    // Add a point at the location of the map click
+                    var barrier = new Graphic({
+                      geometry: event.mapPoint,
+                      symbol: barrierSymbol
+                    });
+                    routeLayer.add(barrier);
+                    closestFacilityParameters.barriers.features.push(barrier);
+                    break;
+                  case 3:
+                    // Add a point at the location of the map click
+                    var facility = new Graphic({
+                      geometry: event.mapPoint,
+                      symbol: facilitySymbol
+                    });
+                    routeLayer.add(facility);
+                    closestFacilityParameters.facilities.features.push(facility);
+                    break;
+
+                }
+              }
+      );
+
+
+      // Adds the solved route to the map as a graphic
+      function showRoute(solveResult) {
+        //路径分析的结果
+        alert("456");
+        var routeResults = solveResult.routes;
+        alert("789");
+        var graphic  = routeResults[0];
+        graphic.symbol(routeSymbol);
+        routeLayer.add(graphic);
+
+
+      }
+
+
+
+
+
+      view.ui.add(coordinateConversionWidget, "bottom-left");
+      view.ui.add(basemapToggle, "bottom-right");
+      //view.ui.add(basemapGallery, "top-right");
+      view.ui.add(search, "top-right");
+      view.ui.add(sketch, "bottom-left");
+
+      // adds the compass to the top left corner of the MapView
+      view.ui.add(compass, "top-left");
+      // Add widget to the bottom left corner of the view
+      view.ui.add(scaleBar, {
+        position: "top-left"
+      });
+
+      map.add(featureLayer);
+
+    });
+  </script>
+</head>
+<body class="claro">
+<button id="addIncident"  class="btn btn-primary form-control" >添加事件点</button>
+<button id="addFacility"  class="btn btn-primary form-control" >添加设施点</button>
+<button id="addBarrier"  class="btn btn-primary form-control">添加障碍</button>
+<button id="Analyze"  class="btn btn-primary form-control">分析路径</button>
+<div id="viewDiv"></div>
+</body>
+</html>
