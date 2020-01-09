@@ -3,7 +3,9 @@ package com.community.utils;
 import org.apache.kafka.common.serialization.Serializer;
 
 import java.util.Map;
-
+/*
+    对消息进行序列化，把对象转为字符串信息
+*/
 public class EncodingKafka implements Serializer<Object> {
 
     public EncodingKafka() {

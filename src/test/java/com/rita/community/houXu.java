@@ -1,10 +1,16 @@
 package com.rita.community;
 
+import com.community.bean.Article;
+import com.community.service.IArticleService;
+import org.junit.Test;
 import reactor.core.Exceptions;
 
+import java.util.List;
 import java.util.Stack;
 
 public class houXu {
+    IArticleService articleService;
+
 
     public static void main(String[] args)throws Exception {
         btnode a1 = new btnode();

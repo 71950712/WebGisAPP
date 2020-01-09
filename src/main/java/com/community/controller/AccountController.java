@@ -31,17 +31,23 @@ public class AccountController {
         int id = Integer.parseInt(request.getParameter("id"));
         return  accountService.getAccountById(id);
     }
+    /*
+   判断是否已登录，若已登录则跳转页面
+ */
     @RequestMapping(path="/")
     public String tologin(){
        Subject subject = SecurityUtils.getSubject();
         System.out.println(subject.isRemembered());
         System.out.println(subject.isAuthenticated());
         if(subject.isRemembered()||subject.isAuthenticated()){
-            return "account/ts";
+            return "account/articleList";
         }
 
         return "Login";
     }
+    /*
+   登录功能实现shiro,执行用户登录认证，并将session信息存到redis
+ */
     @RequestMapping(path="/login")
     @ResponseBody
     public boolean login(String id,String pwd){
@@ -70,6 +76,9 @@ public class AccountController {
 
 
     }
+    /*
+        注册功能实现，此处用了kafka消息队列，将对象account序列化发布到register这个topic下，采用发布订阅模式
+    */
     @RequestMapping(path="/register")
     @ResponseBody
     public boolean addAccount(String id,String pwd){

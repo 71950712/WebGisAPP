@@ -12,21 +12,18 @@
     <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="http://localhost:8580/arcgis_js_api/js/jquery-3.4.1.min.js" ></script>
 
-    <script type="text/javascript">
-        function jump(){
-            window.location.href="http://www.baidu.com";
-        }
+    <script  type="text/javascript">
         $(function () {
             $("#login_btn").click(function(){
                 var username = $("#userName").val();//取值
-                var password = $("#Password").val();
+                var password = $("#password").val();
                 if(!username){
                     alert("用户名必填!");
                     $("#userName").focus();//获取焦点
                     return ;
                 }
                 if(!password){
-                    alert("密码必填!");
+                    alert(password);
                     $("#Password").focus();//获取焦点
                     return ;
                 }
@@ -44,7 +41,7 @@
             });
             $("#register_btn").click(function(){
                 var username = $("#userName").val();//取值
-                var password = $("#Password").val();
+                var password = $("#password").val();
                 if(!username){
                     alert("用户名必填!");
                     $("#userName").focus();//获取焦点
@@ -86,8 +83,8 @@
                 <input id="userName"type="text" class="form-control"placeholder="用户名" autocomplete="off" name="id">
             </div>
             <div class="form-group">
-                <label for="Password" class="col-sm-2 control-label">Password</label>
-                <input id="Password" type="password" class="form-control" placeholder="密码" autocomplete="off" name="pwd">
+                <label for="password" class="col-sm-2 control-label">Password</label>
+                <input id="password" type="text" class="form-control" placeholder="密码" autocomplete="off" name="pwd">
             </div>
         </div>
         <div class="modal-footer">

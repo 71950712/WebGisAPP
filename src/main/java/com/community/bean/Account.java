@@ -2,6 +2,9 @@ package com.community.bean;
 
 import java.io.Serializable;
 
+/*
+   用户的对应实体类
+ */
 public class Account implements Serializable {
     private int id;
     private String name;

@@ -18,7 +18,7 @@ public class RWLock {
     private CuratorFramework client;
 
 
-    //4 分布式锁
+    //4 分布式锁,在/readwriter目录下创建临时节点排队
      private InterProcessReadWriteLock lock = new InterProcessReadWriteLock(client, "/readwriter");
      private InterProcessMutex readLock = lock.readLock();
      private InterProcessMutex writeLock = lock.writeLock();

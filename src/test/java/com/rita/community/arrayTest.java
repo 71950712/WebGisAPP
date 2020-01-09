@@ -15,10 +15,15 @@ public class arrayTest {
 
 
     public static void main(String[] args) {
-        String message = "123:123";
-        String[] array = message.split("\\:");
-        System.out.println(array[0]);
-        System.out.println("收到消息id:"+array[0]+"pwd:"+array[1]);
+        quickSort quickSort1 = new quickSort();
+        int[] a = {15,985,5,7,24,1,23,58,4,94};
+        int tag = 0;
+        int low =0;
+        int high = a.length - 1;
+        System.out.println(a.length);
+        System.out.println(high);
+        quickSort1.quickSortImpl(a,low,high);
+
 
     }
 

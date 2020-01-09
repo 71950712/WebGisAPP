@@ -14,8 +14,8 @@
       #viewDiv {
         margin: 0;
         padding: 0;
-        width: 100%;
-        height: 100%;
+        width: 1275px;
+        height: 625px;
       }
     </style>
     <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
@@ -60,6 +60,7 @@
         // ArcGIS Online hosted service proxy
         var routeTask = new RouteTask({
           url:
+                  //"https://utility.arcgis.com/usrsvcs/appservices/21705917/rest/services/World/Route/NAServer/Route_World"
                   "https://route.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World"
         });
         // Setup the route parameters
@@ -296,9 +297,14 @@
     </script>
   </head>
   <body class="claro">
+      <main style="text-align: center;width: auto;display: flex">
+    <div id="viewDiv"></div>
+    <div style="width: 125px;line-height: 20px"> 
   <button id="addStop"  class="btn btn-primary form-control" onclick="addStop()">添加停靠点</button>
   <button id="addBarrier"  class="btn btn-primary form-control">添加障碍</button>
   <button id="Analyze"  class="btn btn-primary form-control">分析路径</button>
-    <div id="viewDiv"></div>
+    </div>
+    </main>
+
   </body>
 </html>

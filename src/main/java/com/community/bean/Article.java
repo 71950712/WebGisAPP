@@ -2,7 +2,9 @@ package com.community.bean;
 
 import java.io.Serializable;
 import java.util.Date;
-
+/*
+   文章的对应实体类
+ */
 public class Article implements Serializable {
     private int id;
     private String title;

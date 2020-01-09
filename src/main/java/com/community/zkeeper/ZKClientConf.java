@@ -8,7 +8,9 @@ import org.apache.curator.retry.RetryNTimes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+/*
+   zookeeper配置类
+ */
 @Configuration
 public class ZKClientConf {
 

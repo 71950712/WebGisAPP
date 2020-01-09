@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://localhost:8580/arcgis_js_api/css/bootstrap-theme.min.css"/>
+    <script src="http://localhost:8580/arcgis_js_api/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="http://localhost:8580/arcgis_js_api/js/jquery-3.4.1.min.js" ></script>
+    <script src="http://localhost:8580/bstable/dist/bootstrap-table.min.js" ></script>
+    <script src="http://localhost:8580/bstable/dist/locale/bootstrap-table-zh-CN.min.js" ></script>
+
+    <style>
+    	.left {
+    		float:left;
+    		position: absolute;
+    		top:165px;
+    		
+    	}
+		.right {
+    		float:left;
+    		position: absolute;
+			top:165px;
+			left:275px;
+    	}
+    	#im {
+    		float:left;
+    		list-style:none;
+    		position: absolute;		
+    	}
+    	.bar {
+    	    float:left;
+    		position: absolute;
+            top:325px;
+            left:55px;  	
+			text-align:center;
+    	}
+    	.bar li{
+    		float:left;
+    		list-style:none;
+    		padding: 0px 10px 0px 0px;
+    	}
+    </style>
+    
+    
+</head>
+<body>
+	<button type="button" onclick="dianwo()">点我</button>
+	<div id="header" style="top:500px;display: flex;flex-direction:row">
+
+
+	  <div style="width:300px">性别:
+		  <label><input type="radio" name="sex" value="男生">男生</label>
+		  <label><input type="radio" name="sex" value="女生">女生</label>
+	  </div>
+		<div>学历:
+			<select>
+				<option value="123" style="width:300px">选</option>
+			</select>
+		</div>
+  </div>
+	<div class="zhezhao" id='zhezhao'>
+		<div class="tankuang">
+			<div id="hea">
+				<span>我是弹窗</span>
+				<div id="header-right" onclick="hidder()">x</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+	<script src="http://localhost:8580/vue/vue.js"></script>
+	<script type="text/javascript">
+		document.getElementById('zhezhao').style.display="none";
+		function dianwo(){
+			document.getElementById('zhezhao').style.display="";
+		}
+		function hidder(){
+			document.getElementById('zhezhao').style.display="none";
+		}
+
+
+		var vjs = new Vue({
+			el: "#header",
+			data:{
+				timer : null,
+				imgArr:[
+					"http://localhost:8580/media/hw.jpg",
+					"http://localhost:8580/media/iphone.jpg",
+					"http://localhost:8580/media/mi9.jpg",
+					"http://localhost:8580/media/nova.jpg",
+					"http://localhost:8580/media/ss.jpg",
+					"http://localhost:8580/media/vivo.jpg",
+				],
+				index:0
+			
+			},
+			methods:{
+			autoplay:function(){
+				this.timer = setInterval(this.nex,1000);
+			},
+			pre:function(){
+				this.index--;
+				if(this.index<0){
+					console.log("turnto");
+					this.index = 5;
+				}
+			},
+			nex:function(){
+				this.index++;
+				if(this.index>5){
+					console.log("turnto");
+					this.index = 0;
+				}
+			},
+			slide:function(){
+				console.log("slide");
+				this.timer = setInterval(this.nex,1000);
+			},
+			stop:function(){
+				console.log("slide");
+				clearInterval(this.timer);
+			}
+			}
+		
+		})
+	</script>
+</body>
+</html>

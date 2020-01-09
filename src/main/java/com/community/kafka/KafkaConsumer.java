@@ -24,7 +24,7 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = {"register"})
     public void receiveMessage(Account message){
-    	//收到通道的消息之后执行秒杀操作
+    	//收到通道的消息之后执行注册操作向数据库写入一条记录
     	//String[] array = message.split("\\:");
         System.out.println("收到消息id:"+message.getId()+"pwd:"+message.getPassword());
         accountService.insertOne(message);
